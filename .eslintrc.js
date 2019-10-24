@@ -32,7 +32,7 @@ module.exports = {
       "always",
       {
         js: "never",
-        vue: "never"
+        ts: "never"
       }
     ],
     // allow debugger during development

@@ -1,7 +1,7 @@
-<script>
+<script lang="ts">
 import { get } from "lodash-es";
-import FinderItem from "./FinderItem";
-import FinderListDropZone from "./FinderListDropZone";
+import FinderItem from "./FinderItem.vue";
+import FinderListDropZone from "./FinderListDropZone.vue";
 
 function renderItems(h, { props }) {
   const DropZoneComponent = props.dropZoneComponent;

@@ -1,3 +1,13 @@
+interface Node {
+  id: string;
+  children: Node[];
+  parent?: string;
+}
+
+interface NodesMap {
+  [id: string]: Node;
+}
+
 /**
  * Indicate whether an ID matches the given item or one of its children, or not.
  *
@@ -5,7 +15,7 @@
  * @param {String} id   ID of the item to find
  * @return {Boolean} `true` if `id` matches item or one of its children
  */
-export function contains(item, id) {
+export function contains(item: Node, id: string): boolean {
   return (
     item.id === id ||
     (item.children ? item.children.some(child => contains(child, id)) : false)
@@ -18,10 +28,10 @@ export function contains(item, id) {
  * @param {Object} tree Root node
  * @return {Object} Built map
  */
-export function buildNodesMap(tree) {
-  const nodesMap = {};
+export function buildNodesMap(tree: Node) {
+  const nodesMap: NodesMap = {};
 
-  function buildChildrenMap(node, parentId) {
+  function buildChildrenMap(node: Node, parentId?: string) {
     if (!node || !node.id) {
       return;
     }
@@ -53,8 +63,11 @@ export function buildNodesMap(tree) {
  * @param {Object} nodesMap Map of keys -> nodes
  * @return {Array<string>} List of node IDs composing a path to a given node
  */
-export function path(id, nodesMap) {
-  function parentPath(id) {
+export function path(id: string, nodesMap: NodesMap) {
+  function parentPath(id?: string): string[] {
+    if (!id) {
+      return [];
+    }
     const node = nodesMap[id];
 
     if (!node) {
@@ -64,7 +77,7 @@ export function path(id, nodesMap) {
     return [...parentPath(node.parent), id];
   }
 
-  return parentPath(id, []);
+  return parentPath(id);
 }
 
 /**
@@ -74,11 +87,20 @@ export function path(id, nodesMap) {
  * @param {Object}   nodesMap       Map of keys -> nodes
  * @return {Array<string>} List of node IDs composing a path to a given node
  */
-export function getFilteredNodes(filterFunction, rootNodeId, nodesMap) {
-  const filteredNodes = [];
+export function getFilteredNodes(
+  filterFunction: Function,
+  rootNodeId: string,
+  nodesMap: NodesMap
+) {
+  const filteredNodes: string[] = [];
 
-  function filter(nodeId) {
-    const node = nodesMap[nodeId];
+  interface NodeToHide extends Node {
+    toHide?: boolean;
+    children: NodeToHide[];
+  }
+
+  function filter(nodeId: string): NodeToHide {
+    const node = nodesMap[nodeId] as NodeToHide;
     const filteredChildren = (node.children || [])
       .map(child => filter(child.id))
       .filter(({ toHide }) => !toHide);

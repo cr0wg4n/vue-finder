@@ -7,8 +7,26 @@ import {
 } from "@/utils/tree-utils";
 import EventManager from "./event-manager";
 
+interface Options {
+  defaultExpanded?: boolean;
+  filter?: Function;
+}
+
 export default class extends EventManager {
-  constructor(root = {}, options = {}) {
+  private nodesMap: {
+    [id: string]: {
+      id: string;
+      selected?: boolean;
+    };
+  } = {};
+  private _filter: Function | null = null;
+  private filtered: string[];
+  private selected: string[];
+  private expanded: string[] = [];
+  private expandedWithoutFilter: string[] = [];
+  private draggedNodeId: string | null;
+
+  constructor(root = {}, options: Options = {}) {
     super();
     Object.defineProperty(this, "_root", {
       value: root,
@@ -33,10 +51,10 @@ export default class extends EventManager {
     }
 
     this._updateVisibleTree();
-    this.draggedNodeId = undefined;
+    this.draggedNodeId = null;
   }
 
-  _initExpanded(defaultExpanded) {
+  _initExpanded(defaultExpanded: string) {
     if (defaultExpanded) {
       this.expandNode(defaultExpanded);
     } else if (this.root && this.root.id) {
@@ -195,7 +213,7 @@ export default class extends EventManager {
    *
    * @param {Function} newFilter
    */
-  set filter(newFilter) {
+  set filter(newFilter: Function) {
     this._filter = newFilter;
 
     if (!this._filter) {

@@ -1,6 +1,7 @@
-<script>
-import TreeModel from "@/utils/tree-model";
-import FinderList from "./FinderList";
+<script lang="ts">
+import Vue from "vue";
+import TreeModel from "@/utils/tree-model.ts";
+import FinderList from "./FinderList.vue";
 
 /**
  * Render the tree of an item and its selected children.
@@ -10,7 +11,7 @@ import FinderList from "./FinderList";
  * @param {Object} item       Item to render
  * @return Rendering object
  */
-function renderTree(h, context, item) {
+function renderTree(h: Vue.CreateElement, context, item): Vue.VNode {
   if (!item || !item.children || item.children.length === 0) {
     return null;
   }
@@ -52,7 +53,7 @@ function easeOutQuad(elapsedTime, start, end, duration) {
   return -end * (elapsedTime /= duration) * (elapsedTime - 2) + start;
 }
 
-export default {
+export default Vue.extend({
   name: "Finder",
   components: {
     FinderList
@@ -304,7 +305,7 @@ export default {
       </div>
     );
   }
-};
+});
 </script>
 
 <style lang="scss" scoped>
